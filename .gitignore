@@ -62,6 +62,8 @@ gradle/
 .DS_Store
 */.idea/
 .idea/
+.idea/modules.xml
+.idea/vcs.xml
 gradlew
 gradlew.bat
 unused.txt

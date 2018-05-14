@@ -9,13 +9,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+        <!-- 模块是否可用 -->
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true"/>
+        <!-- 模块描述 -->
+        <meta-data
+            android:name="xposeddescription"
+            android:value="外勤助手劫持"/>
+        <!-- 最低版本号 -->
+        <meta-data
+            android:name="xposedminversion"
+            android:value="30"/>
+
     </application>
 
 </manifest>
