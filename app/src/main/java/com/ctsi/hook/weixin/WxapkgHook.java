@@ -1,10 +1,11 @@
 package com.ctsi.hook.weixin;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,36 +39,16 @@ public class WxapkgHook {
 
 
     public static void hook(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        Log.i("TAG_CTSI", "微信--start");
         if ("com.tencent.mm".equals(loadPackageParam.packageName)) {
+            Log.i("TAG_CTSI", "开始Hook 微信 " + loadPackageParam.packageName);
+            ClassLoader loader = loadPackageParam.classLoader;
             try {
-                XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        final ClassLoader loader = ((Context) param.args[0]).getClassLoader();
-                        try {
-
-                            clazz = loader.loadClass("com.tencent.mm.plugin.appbrand.appcache.ad");
-                            if (clazz != null) {
-                                XposedHelpers.findAndHookMethod(clazz, "ae", String.class, int.class, new XC_MethodHook() {
-                                    @Override
-                                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                        super.afterHookedMethod(param);
-                                        Log.i("jw", "args0:" + param.args[0] + ",args1:" + param.args[1]);
-                                        Log.i("jw", "result:" + param.getResult());
-                                    }
-                                });
-                            }
-
-                            hookAddItem(loader);
-                            hookClickItem(loader);
-                            hookAppid(loader);
-                        } catch (Exception e) {
-                            Log.i("jw", "load class err:" + Log.getStackTraceString(e));
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                Log.i("jw", "hook err:" + Log.getStackTraceString(e));
+                hookAddItem(loader);
+                hookClickItem(loader);
+                hookAppid(loader);
+            } catch (Throwable throwable) {
+                Log.i("TAG_CTSI", "hook微信失败：" + throwable.getLocalizedMessage());
             }
         }
     }
@@ -107,6 +88,7 @@ public class WxapkgHook {
     }
 
     private static void hookAddItem(final ClassLoader loader) throws Throwable {
+        Log.i("TAG_CTSI", "hookAddItem start");
         clazz = loader.loadClass("com.tencent.mm.ui.widget.g$b");
         Class<?> paramClazz = loader.loadClass("com.tencent.mm.ui.widget.g");
         if (clazz != null && paramClazz != null) {
@@ -138,19 +120,24 @@ public class WxapkgHook {
                             String menuItem3Str = "点击解析小程序包源码";
                             MenuItem menuItem3 = createItem(loader, menuItem3Str, 0);
 
+                            String menuItem4Str = "点击外勤助手";
+                            MenuItem menuItem4 = createItem(loader, menuItem4Str, 0);
+
                             xcZObj.add(menuItem1);
                             xcZObj.add(menuItem2);
                             xcZObj.add(menuItem3);
+                            xcZObj.add(menuItem4);
                         }
                     } catch (Exception e) {
-                        Log.i("jw", "reflect err:" + Log.getStackTraceString(e));
+                        Log.i("TAG_CTSI", "添加Item 失败");
+                        Log.i("TAG_CTSI", "reflect err:" + Log.getStackTraceString(e));
                     }
                 }
             });
         }
     }
 
-    private static void hookClickItem(ClassLoader loader) throws Throwable {
+    private static void hookClickItem(final ClassLoader loader) throws Throwable {
         clazz = loader.loadClass("com.tencent.mm.ui.widget.g$1");
         if (clazz != null) {
             XposedHelpers.findAndHookMethod(clazz, "onItemClick", AdapterView.class, View.class, int.class, long.class, new XC_MethodHook() {
@@ -184,6 +171,14 @@ public class WxapkgHook {
                             Toast.makeText(wxContext, "开始解析，解析后的目录为:/sdcard/fourbrother/" + wxAppid + "_" + wxAppVersion + "/", Toast.LENGTH_LONG).show();
                             startParseWxpkg();
                         }
+                    } else if (pos == 3) {
+                        if (wxContext != null) {
+                            Intent intent = new Intent();
+                            ComponentName componentName = new ComponentName("com.ctsi.android.mts.client", "com.ctsi.android.mts.client.ztest.accountTest.Activity_AccountTest");
+                            intent.setComponent(componentName);
+                            wxContext.startActivity(intent);
+                            Log.i("TAG_CTSI", "跳转外勤助手！");
+                        }
                     }
                 }
             });
@@ -196,9 +191,10 @@ public class WxapkgHook {
             Class<?> oClazz = loader.loadClass("com.tencent.mm.ui.base.o");
             Constructor<?> constructor = oClazz.getConstructor(int.class, int.class);
             MenuItem oObj = (MenuItem) constructor.newInstance(index, 0);
-            Field titleF = oObj.getClass().getDeclaredField("title");
-            titleF.setAccessible(true);
-            titleF.set(oObj, title);
+            oObj.setTitle(title);
+//            Field titleF = oObj.getClass().getDeclaredField("title");
+//            titleF.setAccessible(true);
+//            titleF.set(oObj, title);
             return oObj;
         } catch (Exception e) {
             return null;

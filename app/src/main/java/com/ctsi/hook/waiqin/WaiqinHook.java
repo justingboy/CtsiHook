@@ -1,7 +1,9 @@
 package com.ctsi.hook.waiqin;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
 
@@ -15,6 +17,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class WaiqinHook {
+
+    private static Context mContext;
 
     public static void hook(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
 
@@ -43,7 +47,7 @@ public class WaiqinHook {
         }
     }
 
-    private static void hookLogin(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+    private static void hookLogin(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("com.ctsi.android.mts.client.ztest.accountTest.Activity_AccountTest",
                 loadPackageParam.classLoader, "onClick", new XC_MethodHook() {
 
@@ -59,10 +63,10 @@ public class WaiqinHook {
                             Log.i("TAG_CTSI", "mdn = " + editText.getText().toString());
                             editText.setText("13370170836");
                             mEditNumble.set(param.thisObject, editText);
+                            mContext = editText.getContext();
                         } catch (Exception ex) {
                             Log.i("TAG_CTSI", "ex = " + ex.getLocalizedMessage());
                         }
-
 
                     }
 
@@ -70,6 +74,7 @@ public class WaiqinHook {
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
                         Log.i("TAG_CTSI", "外勤助手登录");
+                        Toast.makeText(mContext, "外勤助手登录成功", Toast.LENGTH_LONG).show();
                     }
                 });
     }
