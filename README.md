@@ -58,7 +58,7 @@ public class XposedInit implements IXposedHookLoadPackage {
 ```
 * findAndHookMethod :
 ```
-	private static void hookAppid(ClassLoader loader) throws Throwable{
+private static void hookAppid(ClassLoader loader) throws Throwable{
 
 		clazz = loader.loadClass("com.tencent.mm.plugin.appbrand.page.u");
 		if(clazz != null){
@@ -175,7 +175,7 @@ XposedHelpers.findAndHookMethod(clazz, "aeN", new XC_MethodHook(){
 
 * 屏蔽掉原始方法的调用：
 ```
-  private static void hookMethodReplacement(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+private static void hookMethodReplacement(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("com.ctsi.android.mts.client.ztest.accountTest.Activity_AccountTest",
                 loadPackageParam.classLoader, "onClick", new XC_MethodReplacement() {
                     @Override
@@ -189,6 +189,23 @@ XposedHelpers.findAndHookMethod(clazz, "aeN", new XC_MethodHook(){
                     }
                 });
     }
+```
+* 支持免重启生效修改的hook代码(**第一次生效需要重启**)：
+```
+1. HookLoader (具体看该类的代码实现与配置)
+2. private final String handleHookClass = XposedInit.class.getName();（真正hook逻辑处理类）
+```
+
+* 支持多个模块同时生效：
+```
+public class XposedInit implements IXposedHookLoadPackage {
+
+    @Override
+    public void handleLoadPackage(LoadPackageParam loadPackageParam) throws Throwable {
+        WaiqinHook.hook(loadPackageParam);//外勤助手
+        WxapkgHook.hook(loadPackageParam);//微信小程序
+    }
+}
 ```
 
 
