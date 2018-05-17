@@ -44,7 +44,7 @@ public class HookLoader implements IXposedHookLoadPackage {
 
     static {
         // TODO: Add the package name of application your want to hook!
-//        hostAppPackages.add("com.ctsi.android.mts.client");
+        hostAppPackages.add("com.ctsi.android.mts.client");
         hostAppPackages.add("com.tencent.mm");
     }
 

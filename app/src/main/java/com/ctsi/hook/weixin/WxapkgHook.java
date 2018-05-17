@@ -39,7 +39,6 @@ public class WxapkgHook {
 
 
     public static void hook(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        Log.i("TAG_CTSI", "微信--start");
         if ("com.tencent.mm".equals(loadPackageParam.packageName)) {
             Log.i("TAG_CTSI", "开始Hook 微信 " + loadPackageParam.packageName);
             ClassLoader loader = loadPackageParam.classLoader;
@@ -113,7 +112,7 @@ public class WxapkgHook {
                             String menuItem1Str = "小程序的Appid：" + wxAppid + "\n小程序版本号：" + wxAppVersion;
                             MenuItem menuItem1 = createItem(loader, menuItem1Str, 0);
 
-                            String menuItem2Str = "小程序包路径：/data/data/com.tencent.mm/MicroMsg/4d0238658a35658e7bc9597a2de4d49e/appbrand/pkg/" +
+                            String menuItem2Str = "小程序包路径：/data/data/com.tencent.mm/MicroMsg/14c5743c651b2b1ffb5d1205acd537e2/appbrand/pkg/" +
                                     "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
                             MenuItem menuItem2 = createItem(loader, menuItem2Str, 0);
 
@@ -158,7 +157,7 @@ public class WxapkgHook {
                             Toast.makeText(wxContext, "小程序appid复制失败", Toast.LENGTH_LONG).show();
                             return;
                         }
-                        String content = "/data/data/com.tencent.mm/MicroMsg/4d0238658a35658e7bc9597a2de4d49e/appbrand/pkg/" +
+                        String content = "/data/data/com.tencent.mm/MicroMsg/14c5743c651b2b1ffb5d1205acd537e2/appbrand/pkg/" +
                                 "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
                         boolean isSucc = copyClipboard(content);
                         if (isSucc) {
@@ -168,7 +167,7 @@ public class WxapkgHook {
                         }
                     } else if (pos == 2) {
                         if (wxContext != null) {
-                            Toast.makeText(wxContext, "开始解析，解析后的目录为:/sdcard/fourbrother/" + wxAppid + "_" + wxAppVersion + "/", Toast.LENGTH_LONG).show();
+                            Toast.makeText(wxContext, "开始解析，解析后的目录为:/sdcard/WXapkg/" + wxAppid + "_" + wxAppVersion + "/", Toast.LENGTH_LONG).show();
                             startParseWxpkg();
                         }
                     } else if (pos == 3) {
@@ -217,9 +216,11 @@ public class WxapkgHook {
             @SuppressLint("SdCardPath")
             @Override
             protected Boolean doInBackground(Void... params) {
-                String srcPath = wxContext.getFilesDir().getParentFile().getAbsolutePath() + "/MicroMsg/4d0238658a35658e7bc9597a2de4d49e/appbrand/pkg/";
-                srcPath = srcPath + "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
-                String desPath = "/sdcard/fourbrother/" + "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
+                String appIdHashcode = "-1382336895";
+                String srcPath = wxContext.getFilesDir().getParentFile().getAbsolutePath() + "/MicroMsg/14c5743c651b2b1ffb5d1205acd537e2/appbrand/pkg/";
+//                srcPath = srcPath + "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
+                srcPath = srcPath + "_" + appIdHashcode + "_" + wxAppVersion + ".wxapkg";
+                String desPath = "/sdcard/WXapkg/" + "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
                 File desFile = new File(desPath);
                 if (!desFile.getParentFile().exists()) {
                     desFile.getParentFile().mkdirs();
