@@ -216,10 +216,8 @@ public class WxapkgHook {
             @SuppressLint("SdCardPath")
             @Override
             protected Boolean doInBackground(Void... params) {
-                String appIdHashcode = "-1382336895";
                 String srcPath = wxContext.getFilesDir().getParentFile().getAbsolutePath() + "/MicroMsg/14c5743c651b2b1ffb5d1205acd537e2/appbrand/pkg/";
-//                srcPath = srcPath + "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
-                srcPath = srcPath + "_" + appIdHashcode + "_" + wxAppVersion + ".wxapkg";
+                srcPath = srcPath + "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
                 String desPath = "/sdcard/WXapkg/" + "_" + wxAppid.hashCode() + "_" + wxAppVersion + ".wxapkg";
                 File desFile = new File(desPath);
                 if (!desFile.getParentFile().exists()) {

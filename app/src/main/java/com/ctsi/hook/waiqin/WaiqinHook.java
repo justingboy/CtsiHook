@@ -48,7 +48,7 @@ public class WaiqinHook {
                         }
                     });
 //            hookLogin(loadPackageParam);
-            hookMethodReplacement(loadPackageParam);
+//            hookMethodReplacement(loadPackageParam);
         }
     }
 
